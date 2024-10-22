@@ -13,9 +13,12 @@ typedef struct s_philo
 	int	eating;
 	int	sleeping;
 	int	thinking;
-    pthread_t thread;
+	int	left_fork;
+	int	right_fork;
+	int	have_eaten;
 	pthread_mutex_t lfork;
     pthread_mutex_t rfork;
+	pthread_t thread;
 }	t_philo;
 
 typedef struct s_main
@@ -27,6 +30,7 @@ typedef struct s_main
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
 	size_t			eat_nb;
+	int				death;
 	pthread_mutex_t *philo_forks;
 	t_philo			*philo;
 }	t_main;
