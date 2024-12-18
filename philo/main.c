@@ -17,10 +17,12 @@ void	init_values(t_main *main, int argc, char *argv[])
 	else
 		main->eat_nb = -1;
 	main->check_eat_nb = 0;
+	main->dead = 0;
 	if (main->philo_nb <= 0 || main->time_to_die <= 0 || main->time_to_eat <= 0 || main->time_to_sleep <= 0)
 		exit(printf("Error\nArgument got the wrong size\n"));
 	pthread_mutex_init(&main->write, NULL);
 	pthread_mutex_init(&main->check_eat, NULL);
+	pthread_mutex_init(&main->check_dead, NULL);
 	p_nb = main->philo_nb;
 	main->philo = NULL;
 	main->philo = malloc(sizeof(t_philo) * main->philo_nb);
@@ -41,7 +43,6 @@ void	init_values(t_main *main, int argc, char *argv[])
 		main->philo[i].id = i + 1;
 		main->philo[i].eating_end_time = -1;
 		main->philo[i].nb_eat = 0;
-		main->philo[i].death = 0;
 		i++;
 	}
 	i = 0;
@@ -94,7 +95,14 @@ void	create_one_thread(t_main *main)
 		return ;
 }
 
-static int finish;
+int	check_finish(t_main *main)
+{
+	pthread_mutex_lock(&main->check_dead);
+	if (main->dead == 1)
+		return (pthread_mutex_unlock(&main->check_dead), 1);
+	pthread_mutex_unlock(&main->check_dead);
+	return (0);
+}
 
 void	*routine(void *main_p)
 {
@@ -103,7 +111,9 @@ void	*routine(void *main_p)
 
 	main = (t_main *)main_p;
 	act_philo = main->actual_philo;
-	while (finish == 0)
+	if (act_philo % 2 == 0)
+		ft_usleep(1);
+	while (check_finish(main) == 0)
 	{
 		pthread_mutex_lock(&main->philo[act_philo].lfork);
 		pthread_mutex_lock(&main->write);
@@ -118,10 +128,12 @@ void	*routine(void *main_p)
 		pthread_mutex_unlock(&main->write);
 		pthread_mutex_lock(&main->check_eat);
 		main->philo[act_philo].eating_end_time = actual_time() - main->start_time;
+		//if (act_philo == 2)
+		//	printf("eating debut time : %ld\n", main->philo[act_philo].eating_end_time);
 		main->philo[act_philo].nb_eat += 1;
 		pthread_mutex_unlock(&main->check_eat);
 		ft_usleep(main->time_to_eat);
-		printf("\n%ld\n", main->philo[act_philo].nb_eat);
+		//printf("\n%ld\n", main->philo[act_philo].nb_eat);
 		pthread_mutex_unlock(&main->philo[act_philo].rfork);
 		pthread_mutex_unlock(&main->philo[act_philo].lfork);
 		pthread_mutex_lock(&main->write);
@@ -135,42 +147,76 @@ void	*routine(void *main_p)
 	return (NULL);
 }
 
-void	*check_end(void *main_p)
+int	philo_dead(t_main *main, int i)
+{
+	pthread_mutex_lock(&main->check_eat);
+	if (((actual_time() - main->start_time) - main->philo[i].eating_end_time) >= main->time_to_die && main->philo[i].eating_end_time != (size_t)-1)
+		return (pthread_mutex_unlock(&main->check_eat), 1);
+	pthread_mutex_unlock(&main->check_eat);
+	return (0);
+}
+
+int	check_death(t_main *main)
 {
 	int i;
-	t_main *main;
-	size_t time;
 
-	main = (t_main *)main_p;
+	i = 0;
+	while (i < main->philo_nb)
+	{
+		if (philo_dead(main, i) == 1)
+		{
+			pthread_mutex_lock(&main->write);
+			printf("%ld %d died\n", (actual_time() - main->start_time), i + 1);
+			pthread_mutex_unlock(&main->write);
+			pthread_mutex_lock(&main->check_dead);
+			main->dead = 1;
+			pthread_mutex_unlock(&main->check_dead);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	check_eat(t_main *main)
+{
+	int i;
+
 	i = 0;
 	main->check_eat_nb = 1;
+	if (main->eat_nb == (size_t)-1)
+		return (0);
+	i = 0;
+	while (i < main->philo_nb)
+	{
+		pthread_mutex_lock(&main->check_eat);
+		if (main->philo[i].nb_eat < main->eat_nb)
+			main->check_eat_nb = 0;
+		pthread_mutex_unlock(&main->check_eat);
+		i++;
+	}
+	if (main->check_eat_nb == 1)
+	{
+		pthread_mutex_lock(&main->check_dead);
+		main->dead = 1;
+		pthread_mutex_unlock(&main->check_dead);
+		pthread_mutex_lock(&main->write);
+		printf("ALL EAT\n");
+		pthread_mutex_unlock(&main->write);
+		return (1);
+	}
+	return (0);
+}
+
+void	*check_end(void *main_p)
+{
+	t_main *main;
+
+	main = (t_main *)main_p;
 	while (1)
 	{
-		while (i < main->philo_nb)
-		{
-			pthread_mutex_lock(&main->check_eat);
-			time = actual_time();
-			printf("end_eating_time : %ld\n", main->philo[i].eating_end_time);
-			size_t ok = (time - main->start_time) - main->philo[i].eating_end_time;
-			printf("ok : %ld\n", ok);
-			if (ok >= main->time_to_die && main->philo[i].eating_end_time != (size_t)-1)
-			{
-				finish = 1;
-				exit(printf("%ld %d died\n", (actual_time() - main->start_time), i + 1));
-			}
-			if (main->philo[i].nb_eat < main->eat_nb)
-				main->check_eat_nb = 0;
-			pthread_mutex_unlock(&main->check_eat);
-			i++;
-		}
-		if (main->check_eat_nb == 1)
-		{
-			finish = 1;
-			exit(printf("ALL EAT\n"));
-		}
-		i = 0;
-		main->check_eat_nb = 1;
-		ft_usleep(1000);
+		if (check_death(main) == 1 || check_eat(main) == 1)
+			return (NULL);
 	}
 	return (NULL);
 }
@@ -184,26 +230,24 @@ void	create_threads(t_main *main)
 	p_nb = main->philo_nb;
 	main->start_time = actual_time();
 	// printf("start time : %ld\n", main->start_time);
+	if (pthread_create(&main->check_end, NULL, &check_end, main) != 0)
+		exit(printf("Error\nThread failed.\n"));
 	while (i < p_nb)
 	{
 		main->actual_philo = i;
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, main) != 0)
 			exit(printf("Error\nThread failed.\n"));
-		ft_usleep(1);
 		i++;
 	}
-	if (pthread_create(&main->check_end, NULL, &check_end, main) != 0)
-		exit(printf("Error\nThread failed.\n"));
-	ft_usleep(1);
 	i = 0;
+	if (pthread_join(main->check_end, NULL) != 0)
+			exit(printf("Error\nThread join failed.\n"));
 	while (i < p_nb)
 	{
 		if (pthread_join(main->philo[i].thread, NULL) != 0)
 			exit(printf("Error\nThread join failed.\n"));
 		i++;
 	}
-	if (pthread_join(main->check_end, NULL) != 0)
-			exit(printf("Error\nThread join failed.\n"));
 	return ;
 }
 
