@@ -20,9 +20,9 @@ int	ft_isspace(int c)
 
 int	ft_atoi(const char *str)
 {
-	int	i;
-	int	nbr;
-	int	sign;
+	size_t	i;
+	unsigned long long	nbr;
+	size_t	sign;
 
 	i = 0;
 	nbr = 0;

@@ -7,6 +7,15 @@ void	init_values(t_main *main, int argc, char *argv[])
 	int p_nb;
 
 	i = 0;
+	if (ft_atoi(argv[1]) <= 0)
+		exit(printf("Error\nWrong arguments\n"));
+	if (ft_atoi(argv[2]) <= 0 || ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0)
+		exit(printf("Error\nWrong arguments\n"));
+	if (argc == 6)
+	{
+		if (ft_atoi(argv[5]) < 0)
+			exit(printf("Error\nWrong arguments\n"));
+	}
 	main->philo_nb = ft_atoi(argv[1]);
 	main->actual_philo = 0;
 	main->time_to_die = ft_atoi(argv[2]);
@@ -18,11 +27,12 @@ void	init_values(t_main *main, int argc, char *argv[])
 		main->eat_nb = -1;
 	main->check_eat_nb = 0;
 	main->dead = 0;
-	if (main->philo_nb <= 0 || main->time_to_die <= 0 || main->time_to_eat <= 0 || main->time_to_sleep <= 0)
-		exit(printf("Error\nArgument got the wrong size\n"));
+	if (main->time_to_sleep < main->time_to_eat)
+		main->time_to_sleep += 10;
 	pthread_mutex_init(&main->write, NULL);
 	pthread_mutex_init(&main->check_eat, NULL);
 	pthread_mutex_init(&main->check_dead, NULL);
+	pthread_mutex_init(&main->a_philo, NULL);
 	p_nb = main->philo_nb;
 	main->philo = NULL;
 	main->philo = malloc(sizeof(t_philo) * main->philo_nb);
@@ -41,7 +51,7 @@ void	init_values(t_main *main, int argc, char *argv[])
 	while (i < p_nb)
 	{
 		main->philo[i].id = i + 1;
-		main->philo[i].eating_end_time = -1;
+		main->philo[i].eating_end_time = 0;
 		main->philo[i].nb_eat = 0;
 		i++;
 	}
@@ -110,7 +120,12 @@ void	*routine(void *main_p)
 	t_main *main;
 
 	main = (t_main *)main_p;
+	pthread_mutex_lock(&main->a_philo);
 	act_philo = main->actual_philo;
+	pthread_mutex_unlock(&main->a_philo);
+	/* pthread_mutex_lock(&main->write);
+	printf("act_philo : %d\n", act_philo + 1);
+	pthread_mutex_unlock(&main->write); */
 	if (act_philo % 2 == 0)
 		ft_usleep(1);
 	while (check_finish(main) == 0)
@@ -127,7 +142,7 @@ void	*routine(void *main_p)
 		printf("%ld %d is eating\n", (actual_time() - main->start_time), act_philo + 1);
 		pthread_mutex_unlock(&main->write);
 		pthread_mutex_lock(&main->check_eat);
-		main->philo[act_philo].eating_end_time = actual_time() - main->start_time;
+		main->philo[act_philo].eating_end_time = actual_time();
 		//if (act_philo == 2)
 		//	printf("eating debut time : %ld\n", main->philo[act_philo].eating_end_time);
 		main->philo[act_philo].nb_eat += 1;
@@ -150,7 +165,8 @@ void	*routine(void *main_p)
 int	philo_dead(t_main *main, int i)
 {
 	pthread_mutex_lock(&main->check_eat);
-	if (((actual_time() - main->start_time) - main->philo[i].eating_end_time) >= main->time_to_die && main->philo[i].eating_end_time != (size_t)-1)
+	//printf("eating_end_time : %ld / i : %d\n", main->philo[i].eating_end_time, i);
+	if ((actual_time() - main->philo[i].eating_end_time) >= main->time_to_die && main->eat_nb == (size_t)-1)
 		return (pthread_mutex_unlock(&main->check_eat), 1);
 	pthread_mutex_unlock(&main->check_eat);
 	return (0);
@@ -230,13 +246,23 @@ void	create_threads(t_main *main)
 	p_nb = main->philo_nb;
 	main->start_time = actual_time();
 	// printf("start time : %ld\n", main->start_time);
+	while (i < p_nb)
+	{
+		main->philo[i].eating_end_time = actual_time();
+		i++;
+	}
+	i = 0;
 	if (pthread_create(&main->check_end, NULL, &check_end, main) != 0)
 		exit(printf("Error\nThread failed.\n"));
 	while (i < p_nb)
 	{
+		pthread_mutex_lock(&main->a_philo);
 		main->actual_philo = i;
+		//printf("i out thread : %d\n", i);
+		pthread_mutex_unlock(&main->a_philo);
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, main) != 0)
 			exit(printf("Error\nThread failed.\n"));
+		ft_usleep(1);
 		i++;
 	}
 	i = 0;

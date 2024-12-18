@@ -30,6 +30,7 @@ typedef struct s_main
 	pthread_mutex_t	write;
 	pthread_mutex_t	check_eat;
 	pthread_mutex_t	check_dead;
+	pthread_mutex_t	a_philo;
 	pthread_mutex_t *philo_forks;
 	pthread_t		check_end;
 	t_philo			*philo;
