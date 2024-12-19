@@ -12,7 +12,7 @@
 
 NAME = philo
 
-SRC = main.c utils.c
+SRC = main.c utils.c init.c threads.c check.c
 
 OBJS := $(SRC:%.c=%.o)
 
