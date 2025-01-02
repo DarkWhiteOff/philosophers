@@ -99,11 +99,6 @@ void	init_threads(t_main *main)
 
 	i = 0;
 	p_nb = main->philo_nb;
-	if (pthread_create(&main->check_end, NULL, &check_end, main) != 0)
-	{
-		destroy_and_free(main);
-		exit(printf("Error\nThread failed.\n"));
-	}
 	while (i < p_nb)
 	{
 		pthread_mutex_lock(&main->a_philo);
@@ -117,6 +112,12 @@ void	init_threads(t_main *main)
 		ft_usleep(1);
 		i++;
 	}
+	while (1)
+	{
+		if (check_death(main) == 1 || check_eat(main) == 1)
+			return ;
+	}
+	return ;
 }
 
 void	create_threads(t_main *main)
@@ -134,8 +135,6 @@ void	create_threads(t_main *main)
 	}
 	init_threads(main);
 	i = 0;
-	if (pthread_join(main->check_end, NULL) != 0)
-		exit(printf("Error\nThread join failed.\n"));
 	while (i < p_nb)
 	{
 		if (pthread_join(main->philo[i].thread, NULL) != 0)

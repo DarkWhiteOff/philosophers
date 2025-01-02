@@ -59,16 +59,3 @@ int	check_eat(t_main *main)
 	}
 	return (0);
 }
-
-void	*check_end(void *main_p)
-{
-	t_main *main;
-
-	main = (t_main *)main_p;
-	while (1)
-	{
-		if (check_death(main) == 1 || check_eat(main) == 1)
-			return (NULL);
-	}
-	return (NULL);
-}
