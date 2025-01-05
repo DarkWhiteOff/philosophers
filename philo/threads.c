@@ -67,16 +67,24 @@ void	eat(t_main *main, int act_philo)
 	pthread_mutex_unlock(&main->philo[act_philo].lfork);
 }
 
+void	sim_start_delay(size_t start_time)
+{
+	while (actual_time() < start_time)
+		continue ;
+}
+
 void	*routine(void *main_p)
 {
 	int	act_philo;
 	t_main *main;
 
 	main = (t_main *)main_p;
-	pthread_mutex_lock(&main->a_philo);
 	act_philo = main->actual_philo;
-	pthread_mutex_unlock(&main->a_philo);
-	if (act_philo % 2 == 0)
+	pthread_mutex_lock(&main->check_eat);
+	main->philo[act_philo].eating_start_time = main->start_time;
+	pthread_mutex_unlock(&main->check_eat);
+	sim_start_delay(main->start_time);
+	if (act_philo % 2)
 		ft_usleep(1);
 	while (check_finish(main) == 0)
 	{
@@ -99,17 +107,16 @@ void	init_threads(t_main *main)
 
 	i = 0;
 	p_nb = main->philo_nb;
+	main->start_time = actual_time() + (main->philo_nb * 2 * 10);
 	while (i < p_nb)
 	{
-		pthread_mutex_lock(&main->a_philo);
 		main->actual_philo = i;
-		pthread_mutex_unlock(&main->a_philo);
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, main) != 0)
 		{
 			destroy_and_free(main);
 			exit(printf("Error\nThread failed.\n"));
 		}
-		ft_usleep(1);
+		//ft_usleep(1);
 		i++;
 	}
 	while (1)
@@ -127,10 +134,10 @@ void	create_threads(t_main *main)
 
 	i = 0;
 	p_nb = main->philo_nb;
-	main->start_time = actual_time();
+	
 	while (i < p_nb)
 	{
-		main->philo[i].eating_start_time = actual_time();
+		main->philo[i].eating_start_time = main->start_time;
 		i++;
 	}
 	init_threads(main);
