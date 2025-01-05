@@ -6,26 +6,20 @@ void	destroy_and_free(t_main	*main)
 
 	pthread_mutex_destroy(&main->write);
 	pthread_mutex_destroy(&main->check_eat);
-	pthread_mutex_destroy(&main->check_dead);
-	pthread_mutex_destroy(&main->a_philo);
-	if (main->philo)
+	p_nb = main->philo_nb - 1;
+	while (p_nb >= 0)
 	{
-		p_nb = main->philo_nb - 1;
-		while (p_nb >= 0)
-		{
-			pthread_mutex_destroy(&main->philo_forks[p_nb]);
-			p_nb--;
-		}
-		free(main->philo);
+		pthread_mutex_destroy(&main->philo_forks[p_nb]);
+		p_nb--;
 	}
-	if (main->philo_forks)
-		free(main->philo_forks);
 	exit(1);
 }
 
 int main(int argc, char *argv[])
 {
-	t_main main;
+	t_main			main;
+	t_philo			philo[200];
+	pthread_mutex_t	philo_forks[200];
 
 	if (argc < 5 || argc > 6)
 		return (printf("Error\nWrong numbers of arguments\n"), 1);
@@ -38,7 +32,7 @@ int main(int argc, char *argv[])
 		if (ft_atoi(argv[5]) < 0)
 			exit(printf("Error\nWrong arguments\n"));
 	}
-	init_values(&main, argc, argv);
+	init_values(&main, philo, philo_forks, argv);
 	if (main.philo_nb == 1)
 		create_one_thread(&main);
 	else

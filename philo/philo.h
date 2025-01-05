@@ -7,13 +7,25 @@
 # include <pthread.h>
 #include <sys/time.h>
 
+typedef struct s_times
+{
+	size_t			start_time;
+	size_t			eating_start_time;
+	size_t			time_to_die;
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+
+}	t_times;
+
 typedef struct s_philo
 {
 	int				id;
-	size_t			eating_start_time;
-	size_t 			nb_eat;
-	pthread_mutex_t lfork;
-    pthread_mutex_t rfork; // voir si un des deux mutex devient un pointeur
+	t_times			times;
+	size_t 			eaten;
+	pthread_mutex_t *lfork;
+    pthread_mutex_t *rfork;
+	pthread_mutex_t	*write;
+	pthread_mutex_t	*check_eat;
 	pthread_t 		thread;
 }	t_philo;
 
@@ -21,20 +33,12 @@ typedef struct s_main
 {
 	int				philo_nb;
 	int				actual_philo;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
 	size_t			eat_nb;
 	int				check_eat_nb;
-	int				dead;
 	pthread_mutex_t	write;
 	pthread_mutex_t	check_eat;
-	pthread_mutex_t	check_dead;
-	pthread_mutex_t	a_philo;
 	pthread_mutex_t *philo_forks;
-	pthread_t		check_end;
 	t_philo			*philo;
-	size_t			start_time;
 }	t_main;
 
 size_t	ft_strlen(const char *s);
@@ -43,12 +47,12 @@ int	ft_atoi(const char *str);
 size_t	actual_time(void);
 void	ft_usleep(size_t time_in_ms);
 
-void	init_main(t_main *main, int argc, char *argv[]);
-void	init_forks(t_main *main);
-void	init_values(t_main *main, int argc, char *argv[]);
+void	init_main(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char *argv[]);
+void	init_forks(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks);
+void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char *argv[]);
 void	*routine_one(void *main_p);
 void	create_one_thread(t_main *main);
-int	check_finish(t_main *main);
+int	check_finish(t_philo *philo);
 void	*routine(void *main_p);
 void	create_threads(t_main *main);
 int	philo_dead(t_main *main, int i);
