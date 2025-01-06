@@ -23,9 +23,15 @@ void	create_one_thread(t_main *main)
 
 	i = 0;
 	if (pthread_create(&main->philo[i].thread, NULL, &routine_one, &main->philo[i]) != 0)
+	{
+		//printf("Create failed\n");
 		destroy_and_free(main);
+	}
 	if (pthread_join(main->philo[i].thread, NULL) != 0)
+	{
+		//printf("Join failed\n");
 		destroy_and_free(main);
+	}
 	return ;
 }
 
@@ -85,7 +91,10 @@ void	init_threads(t_main *main)
 	while (i < p_nb)
 	{
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, &main->philo[i]) != 0)
+		{
+			//printf("Create failed\n");
 			destroy_and_free(main);
+		}
 		i++;
 	}
 	while (1)
@@ -106,12 +115,14 @@ void	create_threads(t_main *main)
 	i = 0;
 	p_nb = main->philo_nb;
 	init_threads(main);
-	i = 0;
-	while (i < p_nb)
+	i = -1;
+	while (++i < p_nb)
 	{
 		if (pthread_detach(main->philo[i].thread) != 0)
+		{
+			//printf("Detach failed\n");
 			destroy_and_free(main);
-		i++;
+		}
 	}
 	return ;
 }

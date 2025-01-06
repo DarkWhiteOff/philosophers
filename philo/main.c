@@ -4,14 +4,11 @@ void	destroy_and_free(t_main	*main)
 {
 	int p_nb;
 
+	p_nb = main->philo_nb;
+	while (--p_nb >= 0)
+		pthread_mutex_destroy(&main->philo_forks[p_nb]);
 	pthread_mutex_destroy(&main->write);
 	pthread_mutex_destroy(&main->check_eat);
-	p_nb = main->philo_nb - 1;
-	while (p_nb >= 0)
-	{
-		pthread_mutex_destroy(&main->philo_forks[p_nb]);
-		p_nb--;
-	}
 	exit(1);
 }
 
@@ -37,6 +34,7 @@ int main(int argc, char *argv[])
 		create_one_thread(&main);
 	else
 		create_threads(&main);
+	//printf("End reached\n");
 	destroy_and_free(&main);
 	return (0);
 }
