@@ -31,20 +31,21 @@ int	check_death(t_main *main)
 int	check_eat(t_main *main)
 {
 	int i;
+	int check_eat_nb;
 
 	i = 0;
-	main->check_eat_nb = 1;
+	check_eat_nb = 1;
 	if (main->eat_nb == (size_t)-1)
 		return (0);
 	while (i < main->philo_nb)
 	{
 		pthread_mutex_lock(&main->check_eat);
 		if (main->philo[i].eaten < main->eat_nb)
-			main->check_eat_nb = 0;
+			check_eat_nb = 0;
 		pthread_mutex_unlock(&main->check_eat);
 		i++;
 	}
-	if (main->check_eat_nb == 1)
+	if (check_eat_nb == 1)
 	{
 		pthread_mutex_lock(&main->write);
 		printf("ALL EAT\n");

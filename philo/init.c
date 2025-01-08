@@ -7,7 +7,6 @@ void	init_main(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char 
 		main->eat_nb = ft_atoi(argv[5]);
 	else
 		main->eat_nb = -1;
-	main->check_eat_nb = 0;
 	if (pthread_mutex_init(&main->write, NULL) != 0)
 	{
 		//printf("Mutex failed\n");

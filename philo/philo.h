@@ -34,7 +34,6 @@ typedef struct s_main
 	int				philo_nb;
 	int				actual_philo;
 	size_t			eat_nb;
-	int				check_eat_nb;
 	pthread_mutex_t	write;
 	pthread_mutex_t	check_eat;
 	pthread_mutex_t *philo_forks;
