@@ -57,6 +57,15 @@ void	eat(t_philo *philo)
 	pthread_mutex_unlock(philo->lfork);
 }
 
+int	check_end(t_philo * philo)
+{
+	pthread_mutex_unlock(philo->check_eat);
+	if (philo->dead == 1)
+		return (pthread_mutex_unlock(philo->check_eat), 1);
+	pthread_mutex_unlock(philo->check_eat);
+	return (0);
+}
+
 void	*routine(void *philo_p)
 {
 	t_philo *philo;
@@ -67,7 +76,7 @@ void	*routine(void *philo_p)
 	pthread_mutex_lock(philo->check_eat);
 	philo->times.eating_start_time = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
-	while (1)
+	while (check_end(philo) == 0)
 	{
 		eat(philo);
 		pthread_mutex_lock(philo->write);
@@ -118,7 +127,7 @@ void	create_threads(t_main *main)
 	i = -1;
 	while (++i < p_nb)
 	{
-		if (pthread_detach(main->philo[i].thread) != 0)
+		if (pthread_join(main->philo[i].thread, NULL) != 0)
 		{
 			//printf("Detach failed\n");
 			destroy_and_free(main);

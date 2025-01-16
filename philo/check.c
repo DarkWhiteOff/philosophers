@@ -18,9 +18,17 @@ int	check_death(t_main *main)
 	{
 		if (philo_dead(main, i) == 1)
 		{
+			pthread_mutex_lock(&main->check_eat);
+			i = 0;
+			while (i < main->philo_nb)
+			{
+				main->philo[0].dead = 1;
+				i++;
+			}
+			pthread_mutex_lock(&main->check_eat);
 			pthread_mutex_lock(&main->write);
 			printf("%ld %d died\n", (actual_time() - main->philo[i].times.eating_start_time), main->philo[i].id);
-			//pthread_mutex_unlock(&main->write);
+			pthread_mutex_unlock(&main->write);
 			return (1);
 		}
 		i++;
@@ -47,9 +55,17 @@ int	check_eat(t_main *main)
 	}
 	if (check_eat_nb == 1)
 	{
+		pthread_mutex_lock(&main->check_eat);
+		i = 0;
+		while (i < main->philo_nb)
+		{
+			main->philo[0].dead = 1;
+			i++;
+		}
+		pthread_mutex_lock(&main->check_eat);
 		pthread_mutex_lock(&main->write);
 		printf("ALL EAT\n");
-		//pthread_mutex_unlock(&main->write);
+		pthread_mutex_unlock(&main->write);
 		return (1);
 	}
 	return (0);

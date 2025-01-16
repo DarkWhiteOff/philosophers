@@ -6,7 +6,7 @@ void	init_main(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char 
 	if (argv[5])
 		main->eat_nb = ft_atoi(argv[5]);
 	else
-		main->eat_nb = -1;
+		main->eat_nb = -1; 
 	if (pthread_mutex_init(&main->write, NULL) != 0)
 	{
 		//printf("Mutex failed\n");
@@ -69,6 +69,7 @@ void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, cha
 		}
 		philo[i].write = &main->write;
 		philo[i].check_eat = &main->check_eat;
+		philo[i].dead = 0;
 		i++;
 	}
 	init_forks(main, philo, philo_forks);
