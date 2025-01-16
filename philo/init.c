@@ -19,6 +19,7 @@ void	init_main(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char 
 	}
 	main->philo_forks = philo_forks;
 	main->philo = philo;
+	main->dead = 0;
 	return ;
 }
 
@@ -60,7 +61,6 @@ void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, cha
 		philo[i].times.time_to_eat = ft_atoi(argv[3]);
 		philo[i].times.time_to_sleep = ft_atoi(argv[4]);
 		philo[i].times.start_time = actual_time();
-		philo[i].times.eating_start_time = actual_time();
 		philo[i].eaten = 0;
 		if (pthread_mutex_init(&philo_forks[i], NULL) != 0)
 		{
@@ -69,9 +69,16 @@ void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, cha
 		}
 		philo[i].write = &main->write;
 		philo[i].check_eat = &main->check_eat;
-		philo[i].dead = 0;
+		philo[i].dead1 = &main->dead;
 		i++;
 	}
+	i = 0;
+	while (i < main->philo_nb)
+	{
+		printf("okay : %d\n", (int)main->philo[i].dead1);
+		i++;
+	}
+	exit(0);
 	init_forks(main, philo, philo_forks);
 	return ;
 }
