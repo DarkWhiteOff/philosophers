@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 		create_one_thread(&main);
 	else
 		create_threads(&main);
-	//printf("End reached\n");
 	destroy_and_free(&main);
 	return (0);
 }

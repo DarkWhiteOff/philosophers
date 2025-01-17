@@ -27,6 +27,7 @@ typedef struct s_philo
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*check_eat;
 	pthread_t 		thread;
+	pthread_mutex_t	*session;
 	int			*dead1;
 }	t_philo;
 
@@ -37,6 +38,7 @@ typedef struct s_main
 	size_t			eat_nb;
 	pthread_mutex_t	write;
 	pthread_mutex_t	check_eat;
+	pthread_mutex_t	session;
 	pthread_mutex_t *philo_forks;
 	t_philo			*philo;
 	int				dead;

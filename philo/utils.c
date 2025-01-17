@@ -54,7 +54,7 @@ size_t	actual_time(void)
 	time = 0;
 	if (gettimeofday(&current_time, NULL) == -1)
 		return (0);
-	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000); //temps en millisecondes
+	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
 	return (time);
 }
 

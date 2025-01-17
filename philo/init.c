@@ -8,15 +8,11 @@ void	init_main(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char 
 	else
 		main->eat_nb = -1;
 	if (pthread_mutex_init(&main->write, NULL) != 0)
-	{
-		//printf("Mutex failed\n");
 		destroy_and_free(main);
-	}
 	if (pthread_mutex_init(&main->check_eat, NULL) != 0)
-	{
-		//printf("Mutex failed\n");
 		destroy_and_free(main);
-	}
+	if (pthread_mutex_init(&main->session, NULL) != 0)
+		destroy_and_free(main);
 	main->philo_forks = philo_forks;
 	main->philo = philo;
 	main->dead = 0;
@@ -64,12 +60,10 @@ void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, cha
 		philo[i].times.eating_start_time = actual_time();
 		philo[i].eaten = 0;
 		if (pthread_mutex_init(&philo_forks[i], NULL) != 0)
-		{
-			//printf("Mutex failed\n");
 			destroy_and_free(main);
-		}
 		philo[i].write = &main->write;
 		philo[i].check_eat = &main->check_eat;
+		philo[i].session = &main->session;
 		philo[i].dead1 = &main->dead;
 		i++;
 	}

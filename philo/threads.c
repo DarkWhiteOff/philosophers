@@ -23,15 +23,9 @@ void	create_one_thread(t_main *main)
 
 	i = 0;
 	if (pthread_create(&main->philo[i].thread, NULL, &routine_one, &main->philo[i]) != 0)
-	{
-		//printf("Create failed\n");
 		destroy_and_free(main);
-	}
 	if (pthread_join(main->philo[i].thread, NULL) != 0)
-	{
-		//printf("Join failed\n");
 		destroy_and_free(main);
-	}
 	return ;
 }
 
@@ -57,6 +51,15 @@ void	eat(t_philo *philo)
 	pthread_mutex_unlock(philo->lfork);
 }
 
+int	check_end(t_philo * philo)
+{
+	pthread_mutex_lock(philo->check_eat);
+	if (*(philo->dead1) == 1)
+		return (pthread_mutex_unlock(philo->check_eat), 1);
+	pthread_mutex_unlock(philo->check_eat);
+	return (0);
+}
+
 void	*routine(void *philo_p)
 {
 	t_philo *philo;
@@ -67,9 +70,11 @@ void	*routine(void *philo_p)
 	pthread_mutex_lock(philo->check_eat);
 	philo->times.eating_start_time = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
-	while (1)
+	while (check_end(philo) == 0)
 	{
 		eat(philo);
+		if (check_end(philo) == 1)
+			break ;
 		pthread_mutex_lock(philo->write);
 		printf("%ld %d is sleeping\n", (actual_time() - philo->times.start_time), philo->id);
 		pthread_mutex_unlock(philo->write);
@@ -79,15 +84,6 @@ void	*routine(void *philo_p)
 		pthread_mutex_unlock(philo->write);
 	}
 	return (NULL);
-}
-
-int	check_end(t_philo * philo)
-{
-	pthread_mutex_lock(philo->check_eat);
-	if (philo->dead1 == (int *)1)
-		return (pthread_mutex_unlock(philo->check_eat), 1);
-	pthread_mutex_unlock(philo->check_eat);
-	return (0);
 }
 
 void	init_threads(t_main *main)
@@ -100,10 +96,8 @@ void	init_threads(t_main *main)
 	while (i < p_nb)
 	{
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, &main->philo[i]) != 0)
-		{
-			//printf("Create failed\n");
 			destroy_and_free(main);
-		}
+
 		i++;
 	}
 	while (1)
@@ -128,10 +122,7 @@ void	create_threads(t_main *main)
 	while (++i < p_nb)
 	{
 		if (pthread_join(main->philo[i].thread, NULL) != 0)
-		{
-			//printf("Detach failed\n");
 			destroy_and_free(main);
-		}
 	}
 	return ;
 }
