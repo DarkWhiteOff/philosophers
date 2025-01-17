@@ -27,7 +27,7 @@ typedef struct s_philo
 	pthread_mutex_t	*write;
 	pthread_mutex_t	*check_eat;
 	pthread_t 		thread;
-	void	*dead1;
+	int			*dead1;
 }	t_philo;
 
 typedef struct s_main
@@ -39,7 +39,7 @@ typedef struct s_main
 	pthread_mutex_t	check_eat;
 	pthread_mutex_t *philo_forks;
 	t_philo			*philo;
-	int	dead;
+	int				dead;
 }	t_main;
 
 size_t	ft_strlen(const char *s);
@@ -59,7 +59,7 @@ void	create_threads(t_main *main);
 int	philo_dead(t_main *main, int i);
 int	check_death(t_main *main);
 int	check_eat(t_main *main);
-int	check_end(t_philo *philo);
+int	check_end(t_philo * philo);
 void	destroy_and_free(t_main	*main);
 
 #endif

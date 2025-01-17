@@ -13,9 +13,7 @@ void	*routine_one(void *philo_p)
 	printf("%ld %d has taken a fork (L)\n", (actual_time() - philo->times.start_time), philo->id);
 	pthread_mutex_unlock(philo->write);
 	ft_usleep(philo->times.time_to_die);
-	pthread_mutex_lock(philo->write);
 	printf("%ld %d died\n", (actual_time() - philo->times.start_time), philo->id);
-	pthread_mutex_unlock(philo->write);
 	return (NULL);
 }
 
@@ -59,15 +57,6 @@ void	eat(t_philo *philo)
 	pthread_mutex_unlock(philo->lfork);
 }
 
-int	check_end(t_philo * philo)
-{
-	pthread_mutex_lock(philo->check_eat);
-	// if (philo->dead1 == 1)
-	// 	return (pthread_mutex_unlock(philo->check_eat), 1);
-	pthread_mutex_unlock(philo->check_eat);
-	return (0);
-}
-
 void	*routine(void *philo_p)
 {
 	t_philo *philo;
@@ -78,10 +67,8 @@ void	*routine(void *philo_p)
 	pthread_mutex_lock(philo->check_eat);
 	philo->times.eating_start_time = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
-	while (check_end(philo) == 0)
+	while (1)
 	{
-		if (check_end(philo) == 1)
-			break ;
 		eat(philo);
 		pthread_mutex_lock(philo->write);
 		printf("%ld %d is sleeping\n", (actual_time() - philo->times.start_time), philo->id);
@@ -92,6 +79,15 @@ void	*routine(void *philo_p)
 		pthread_mutex_unlock(philo->write);
 	}
 	return (NULL);
+}
+
+int	check_end(t_philo * philo)
+{
+	pthread_mutex_lock(philo->check_eat);
+	if (philo->dead1 == (int *)1)
+		return (pthread_mutex_unlock(philo->check_eat), 1);
+	pthread_mutex_unlock(philo->check_eat);
+	return (0);
 }
 
 void	init_threads(t_main *main)
