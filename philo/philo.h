@@ -63,5 +63,6 @@ int	check_death(t_main *main);
 int	check_eat(t_main *main);
 int	check_end(t_philo * philo);
 void	destroy_and_free(t_main	*main);
+void	write_status(t_philo *philo, char *action);
 
 #endif

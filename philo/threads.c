@@ -32,19 +32,13 @@ void	create_one_thread(t_main *main)
 void	eat(t_philo *philo)
 {
 	pthread_mutex_lock(philo->lfork);
-	pthread_mutex_lock(philo->write);
-	printf("%ld %d has taken a fork (L)\n", (actual_time() - philo->times.start_time), philo->id);
-	pthread_mutex_unlock(philo->write);
+	write_status(philo, "has taken a fork (L)");
 	pthread_mutex_lock(philo->rfork);
-	pthread_mutex_lock(philo->write);
-	printf("%ld %d has taken a fork (R)\n", (actual_time() - philo->times.start_time), philo->id);
-	pthread_mutex_unlock(philo->write);
+	write_status(philo, "has taken a fork (R)");
+	write_status(philo, "is eating");
 	pthread_mutex_lock(philo->check_eat);
-	pthread_mutex_lock(philo->write);
-	printf("%ld %d is eating\n", (actual_time() - philo->times.start_time), philo->id);
-	pthread_mutex_unlock(philo->write);
 	philo->times.eating_start_time = actual_time();
-	philo->eaten += 1;
+	philo->eaten++;
 	pthread_mutex_unlock(philo->check_eat);
 	ft_usleep(philo->times.time_to_eat);
 	pthread_mutex_unlock(philo->rfork);
@@ -68,20 +62,15 @@ void	*routine(void *philo_p)
 	if (philo->id % 2 == 0)
 		ft_usleep(1);
 	pthread_mutex_lock(philo->check_eat);
+	philo->times.start_time = actual_time();
 	philo->times.eating_start_time = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
 	while (check_end(philo) == 0)
 	{
 		eat(philo);
-		if (check_end(philo) == 1)
-			break ;
-		pthread_mutex_lock(philo->write);
-		printf("%ld %d is sleeping\n", (actual_time() - philo->times.start_time), philo->id);
-		pthread_mutex_unlock(philo->write);
+		write_status(philo, "is sleeping");
 		ft_usleep(philo->times.time_to_sleep);
-		pthread_mutex_lock(philo->write);
-		printf("%ld %d is thinking\n", (actual_time() - philo->times.start_time), philo->id);
-		pthread_mutex_unlock(philo->write);
+		write_status(philo, "is thinking");
 	}
 	return (NULL);
 }

@@ -67,3 +67,14 @@ void	ft_usleep(size_t time_in_ms)
 	while ((actual_time() - start_time) < time_in_ms)
 		usleep(time_in_ms / 10);
 }
+
+void	write_status(t_philo *philo, char *action)
+{
+	size_t	time;
+
+	pthread_mutex_lock(philo->write);
+	time = actual_time() - philo->times.start_time;
+	if (check_end(philo) == 0)
+		printf("%ld %d %s\n", time, philo->id, action);
+	pthread_mutex_unlock(philo->write);
+}
