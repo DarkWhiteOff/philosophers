@@ -46,6 +46,23 @@ int	ft_atoi(const char *str)
 	return (nbr * sign);
 }
 
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	int	i;
+
+	i = 0;
+	if (s1 == NULL || s2 == NULL)
+		return (!(s1 == NULL && s2 == NULL));
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (s1[i] - s2[i]);
+}
+
+
 size_t	actual_time(void)
 {
 	size_t		time;
@@ -75,6 +92,10 @@ void	write_status(t_philo *philo, char *action)
 	pthread_mutex_lock(philo->write);
 	time = actual_time() - philo->times.start_time;
 	if (check_end(philo) == 0)
+	{
+		if (ft_strcmp(action, "ALL EAT") == 0)
+			printf("ALL EAT\n");
 		printf("%ld %d %s\n", time, philo->id, action);
+	}
 	pthread_mutex_unlock(philo->write);
 }

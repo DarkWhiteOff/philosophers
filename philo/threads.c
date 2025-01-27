@@ -47,10 +47,10 @@ void	eat(t_philo *philo)
 
 int	check_end(t_philo * philo)
 {
-	pthread_mutex_lock(philo->check_eat);
+	pthread_mutex_lock(philo->dead_mutex);
 	if (*(philo->dead1) == 1)
-		return (pthread_mutex_unlock(philo->check_eat), 1);
-	pthread_mutex_unlock(philo->check_eat);
+		return (pthread_mutex_unlock(philo->dead_mutex), 1);
+	pthread_mutex_unlock(philo->dead_mutex);
 	return (0);
 }
 
@@ -82,6 +82,8 @@ void	init_threads(t_main *main)
 
 	i = 0;
 	p_nb = main->philo_nb;
+	if (pthread_create(&main->checker, NULL, &check, main) != 0)
+			destroy_and_free(main);
 	while (i < p_nb)
 	{
 		if (pthread_create(&main->philo[i].thread, NULL, &routine, &main->philo[i]) != 0)
@@ -89,13 +91,6 @@ void	init_threads(t_main *main)
 
 		i++;
 	}
-	while (1)
-	{
-		if (check_death(main) == 1)
-			return ;
-		if (check_eat(main) == 1)
-			return ;
-	}	
 	return ;
 }
 
@@ -108,6 +103,8 @@ void	create_threads(t_main *main)
 	p_nb = main->philo_nb;
 	init_threads(main);
 	i = -1;
+	if (pthread_join(main->checker, NULL) != 0)
+			destroy_and_free(main);
 	while (++i < p_nb)
 	{
 		if (pthread_join(main->philo[i].thread, NULL) != 0)
