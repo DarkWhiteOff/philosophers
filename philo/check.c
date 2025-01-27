@@ -48,7 +48,6 @@ int	check_eat(t_main *main)
 	}
 	if (check_eat_nb == 1)
 	{
-		write_status(&main->philo[i], "ALL EAT");
 		pthread_mutex_lock(&main->dead_mutex);
 		main->dead = 1;
 		pthread_mutex_unlock(&main->dead_mutex);

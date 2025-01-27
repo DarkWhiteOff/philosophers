@@ -92,10 +92,6 @@ void	write_status(t_philo *philo, char *action)
 	pthread_mutex_lock(philo->write);
 	time = actual_time() - philo->times.start_time;
 	if (check_end(philo) == 0)
-	{
-		if (ft_strcmp(action, "ALL EAT") == 0)
-			printf("ALL EAT\n");
 		printf("%ld %d %s\n", time, philo->id, action);
-	}
 	pthread_mutex_unlock(philo->write);
 }

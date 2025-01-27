@@ -6,14 +6,13 @@ void	*routine_one(void *philo_p)
 
 	philo = (t_philo *)philo_p;
 	pthread_mutex_lock(philo->check_eat);
+	philo->times.start_time = actual_time();
 	philo->times.eating_start_time = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
 	pthread_mutex_lock(philo->lfork);
-	pthread_mutex_lock(philo->write);
-	printf("%ld %d has taken a fork (L)\n", (actual_time() - philo->times.start_time), philo->id);
-	pthread_mutex_unlock(philo->write);
+	write_status(philo, "has taken a fork (L)");
 	ft_usleep(philo->times.time_to_die);
-	printf("%ld %d died\n", (actual_time() - philo->times.start_time), philo->id);
+	write_status(philo, "died");
 	return (NULL);
 }
 
