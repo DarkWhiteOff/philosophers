@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zamgar <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 10:04:23 by zamgar            #+#    #+#             */
+/*   Updated: 2025/02/02 10:04:27 by zamgar           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 size_t	ft_strlen(const char *s)
@@ -20,9 +32,9 @@ int	ft_isspace(int c)
 
 int	ft_atoi(const char *str)
 {
-	size_t	i;
+	size_t				i;
 	unsigned long long	nbr;
-	size_t	sign;
+	size_t				sign;
 
 	i = 0;
 	nbr = 0;
@@ -62,10 +74,9 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (s1[i] - s2[i]);
 }
 
-
 size_t	actual_time(void)
 {
-	size_t		time;
+	size_t			time;
 	struct timeval	current_time;
 
 	time = 0;
@@ -73,25 +84,4 @@ size_t	actual_time(void)
 		return (0);
 	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
 	return (time);
-}
-
-void	ft_usleep(size_t time_in_ms)
-{
-	size_t	start_time;
-
-	start_time = 0;
-	start_time = actual_time();
-	while ((actual_time() - start_time) < time_in_ms)
-		usleep(time_in_ms / 10);
-}
-
-void	write_status(t_philo *philo, int id, char *action)
-{
-	size_t	time;
-
-	pthread_mutex_lock(philo->write);
-	time = actual_time() - philo->start_time;
-	if (!check_end(philo))
-		printf("%ld %d %s\n", time, id, action);
-	pthread_mutex_unlock(philo->write);
 }

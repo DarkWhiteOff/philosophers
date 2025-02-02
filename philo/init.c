@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 09:59:11 by zamgar            #+#    #+#             */
+/*   Updated: 2025/02/02 10:02:24 by zamgar           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	init_main(t_main *main, t_philo *philo)
@@ -12,9 +24,9 @@ void	init_main(t_main *main, t_philo *philo)
 
 void	init_forks(t_philo *philo, pthread_mutex_t *philo_forks, char *philonb)
 {
-	int i;
-	int j;
-	int p_nb;
+	int	i;
+	int	j;
+	int	p_nb;
 
 	i = 0;
 	while (i < ft_atoi(philonb))
@@ -41,7 +53,7 @@ void	init_forks(t_philo *philo, pthread_mutex_t *philo_forks, char *philonb)
 
 void	init_philo(t_main *main, t_philo *philo, char *argv[])
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < ft_atoi(argv[1]))
@@ -68,10 +80,10 @@ void	init_philo(t_main *main, t_philo *philo, char *argv[])
 	return ;
 }
 
-void	init_values(t_main *main, t_philo *philo, pthread_mutex_t *philo_forks, char *argv[])
+void	init_values(t_main *m, t_philo *ph, pthread_mutex_t *forks, char *av[])
 {
-	init_main(main, philo);
-	init_forks(philo, philo_forks, argv[1]);
-	init_philo(main, philo, argv);
+	init_main(m, ph);
+	init_forks(ph, forks, av[1]);
+	init_philo(m, ph, av);
 	return ;
 }

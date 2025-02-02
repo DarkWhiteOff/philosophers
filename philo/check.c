@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 09:59:37 by zamgar            #+#    #+#             */
+/*   Updated: 2025/02/02 10:04:00 by zamgar           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	philo_dead(t_philo *philo, size_t time_to_die)
@@ -12,14 +24,14 @@ int	philo_dead(t_philo *philo, size_t time_to_die)
 
 int	check_death(t_philo *philo)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < philo[0].philo_nb)
 	{
 		if (philo_dead(&philo[i], philo[i].time_to_die))
 		{
-			write_status(&philo[i], philo[i].id, "died");
+			write_status(&philo[i], "died");
 			pthread_mutex_lock(philo[0].dead_mutex);
 			*philo->dead1 = 1;
 			pthread_mutex_unlock(philo[0].dead_mutex);
@@ -32,8 +44,8 @@ int	check_death(t_philo *philo)
 
 int	check_eat(t_philo *philo)
 {
-	int i;
-	int check_eat_nb;
+	int	i;
+	int	check_eat_nb;
 
 	i = 0;
 	check_eat_nb = 0;
@@ -59,7 +71,7 @@ int	check_eat(t_philo *philo)
 
 void	*check(void *philo_p)
 {
-	t_philo *philo;
+	t_philo	*philo;
 
 	philo = (t_philo *)philo_p;
 	while (1)
