@@ -10,7 +10,7 @@
 typedef struct s_times
 {
 	size_t			start_time;
-	size_t			eating_start_time;
+	size_t			last_time_eat;
 	size_t			time_to_die;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;

@@ -19,6 +19,8 @@ OBJS := $(SRC:%.c=%.o)
 CC = gcc
 FLAGS = -Wall -Wextra -Werror -I ./includes
 
+# -fsanitize=thread
+
 .c.o:
 	$(CC) $(FLAGS) -c $< -o $@
 

@@ -7,7 +7,7 @@ void	*routine_one(void *philo_p)
 	philo = (t_philo *)philo_p;
 	pthread_mutex_lock(philo->check_eat);
 	philo->times.start_time = actual_time();
-	philo->times.eating_start_time = actual_time();
+	philo->times.last_time_eat = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
 	pthread_mutex_lock(philo->lfork);
 	write_status(philo, "has taken a fork (L)");
@@ -36,7 +36,7 @@ void	eat(t_philo *philo)
 	write_status(philo, "has taken a fork (R)");
 	write_status(philo, "is eating");
 	pthread_mutex_lock(philo->check_eat);
-	philo->times.eating_start_time = actual_time();
+	philo->times.last_time_eat = actual_time();
 	philo->eaten++;
 	pthread_mutex_unlock(philo->check_eat);
 	ft_usleep(philo->times.time_to_eat);
@@ -62,7 +62,7 @@ void	*routine(void *philo_p)
 		ft_usleep(1);
 	pthread_mutex_lock(philo->check_eat);
 	philo->times.start_time = actual_time();
-	philo->times.eating_start_time = actual_time();
+	philo->times.last_time_eat = actual_time();
 	pthread_mutex_unlock(philo->check_eat);
 	while (check_end(philo) == 0)
 	{

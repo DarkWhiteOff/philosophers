@@ -3,7 +3,7 @@
 int	philo_dead(t_main *main, int i)
 {
 	pthread_mutex_lock(&main->check_eat);
-	if ((actual_time() - main->philo[i].times.eating_start_time) >= main->philo[i].times.time_to_die)
+	if ((actual_time() - main->philo[i].times.last_time_eat) >= main->philo[i].times.time_to_die)
 		return (pthread_mutex_unlock(&main->check_eat), 1);
 	pthread_mutex_unlock(&main->check_eat);
 	return (0);
