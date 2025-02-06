@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:37 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/06 19:24:53 by zamgar           ###   ########.fr       */
+/*   Updated: 2025/02/06 22:38:26 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ int	philo_dead(t_philo *philo, size_t time_to_die)
 
 int	meal_counter(t_philo *philo)
 {
-	int	value;
+	int	eaten;
 
 	pthread_mutex_lock(philo->check_eat);
-	value = philo->eaten;
+	eaten = philo->eaten;
 	pthread_mutex_unlock(philo->check_eat);
-	return (value);
+	return (eaten);
 }
 
 void	mega_check(t_philo *philo)
