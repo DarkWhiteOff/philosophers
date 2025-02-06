@@ -17,7 +17,8 @@ void	ft_usleep(size_t ms, t_philo *philo)
 	size_t	start;
 
 	start = actual_time();
-	while ((actual_time() - start) < ms && !check_death(philo) && !check_finish(philo))
+	while ((actual_time() - start) < ms
+		&& !check_death(philo) && !check_finish(philo))
 		usleep(ms / 10);
 }
 

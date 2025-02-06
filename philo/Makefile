@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zamgar <marvin@42.fr>                      +#+  +:+       +#+         #
+#    By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/15 14:24:43 by zamgar            #+#    #+#              #
-#    Updated: 2025/02/02 10:00:19 by zamgar           ###   ########.fr        #
+#    Updated: 2025/02/06 19:20:46 by zamgar           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRC = main.c utils.c init.c threads.c check.c
+SRC = main.c utils.c init.c threads.c check.c others.c
 
 OBJS := $(SRC:%.c=%.o)
 

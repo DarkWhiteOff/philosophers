@@ -80,5 +80,7 @@ int		check_finish(t_philo *philo);
 void	mega_check(t_philo *philo);
 void	create_one_thread(t_main *main, pthread_mutex_t *philo_forks);
 void	*routine_one(void *philo_p);
+void	set_death(t_philo *philo, int i);
+void	set_finish(t_philo *philo);
 
 #endif

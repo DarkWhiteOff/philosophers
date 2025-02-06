@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:27 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/06 07:38:32 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/06 19:02:20 by zamgar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*routine_one(void *philo_p)
 	write_status(philo, "has taken a fork");
 	pthread_mutex_unlock(philo->lfork);
 	ft_usleep(philo->time_to_die, philo);
-	write_status(philo, "died");		
+	write_status(philo, "died");
 	return (philo_p);
 }
 
@@ -51,24 +51,6 @@ void	eat_action(t_philo *philo)
 	ft_usleep(philo->time_to_eat, philo);
 	pthread_mutex_unlock(philo->rfork);
 	pthread_mutex_unlock(philo->lfork);
-}
-
-int	check_death(t_philo *philo)
-{
-	pthread_mutex_lock(philo->dead_mutex);
-	if (*philo->dead1 == 1)
-		return (pthread_mutex_unlock(philo->dead_mutex), 1);
-	pthread_mutex_unlock(philo->dead_mutex);
-	return (0);
-}
-
-int	check_finish(t_philo *philo)
-{
-	pthread_mutex_lock(philo->finish_mutex);
-	if (*philo->finish1 == 1)
-		return (pthread_mutex_unlock(philo->finish_mutex), 1);
-	pthread_mutex_unlock(philo->finish_mutex);
-	return (0);
 }
 
 void	*routine(void *philo_p)
