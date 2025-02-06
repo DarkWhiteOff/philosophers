@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:37 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/06 02:51:24 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/06 07:39:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,57 +14,53 @@
 
 int	philo_dead(t_philo *philo, size_t time_to_die)
 {
-	pthread_mutex_lock(philo->check_eat);
-	if ((actual_time() - philo->last_time_eat) >= time_to_die
-		&& philo->is_eating == 0)
-		return (pthread_mutex_unlock(philo->check_eat), 1);
-	pthread_mutex_unlock(philo->check_eat);
-	return (0);
-}
-
-int	check_death(t_philo *philo)
-{
-	int	i;
-
-	i = 0;
-	while (i < philo[0].philo_nb)
-	{
-		if (philo_dead(&philo[i], philo[i].time_to_die))
-		{
-			write_status(&philo[i], "died");
-			pthread_mutex_lock(philo[0].dead_mutex);
-			*philo->dead1 = 1;
-			pthread_mutex_unlock(philo[0].dead_mutex);
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
-
-int	check_eat(t_philo *philo)
-{
-	int	i;
-	int	check_eat_nb;
-
-	i = 0;
-	check_eat_nb = 0;
-	if (philo[0].eat_nb == (size_t)-1)
-		return (0);
-	while (i < philo[0].philo_nb)
-	{
-		pthread_mutex_lock(philo[i].check_eat);
-		if (philo[i].eaten >= philo[i].eat_nb)
-			check_eat_nb++;
-		pthread_mutex_unlock(philo[i].check_eat);
-		i++;
-	}
-	if (check_eat_nb == philo[0].philo_nb)
-	{
-		pthread_mutex_lock(philo[0].dead_mutex);
-		*philo->dead1 = 1;
-		pthread_mutex_unlock(philo[0].dead_mutex);
+	if ((actual_time() - philo->last_time_eat) >= time_to_die)
 		return (1);
-	}
 	return (0);
+}
+
+int	meal_counter(t_philo *philo)
+{
+	int	value;
+
+	pthread_mutex_lock(philo->check_eat);
+	value = philo->eaten;
+	pthread_mutex_unlock(philo->check_eat);
+	return (value);
+}
+
+void	mega_check(t_philo *philo)
+{
+	int	i;
+
+	while (check_finish(&philo[0]) == 0)
+	{
+		i = 0;
+		while (i < philo[0].philo_nb && !check_death(&philo[0]))
+		{
+			pthread_mutex_lock(philo[0].check_eat);
+			if ((actual_time() - philo[i].last_time_eat) >= philo[0].time_to_die && philo[i].is_eating == 0)
+			{
+				write_status(&philo[i], "died");
+				pthread_mutex_lock(philo[0].dead_mutex);
+				*philo->dead1 = 1;
+				pthread_mutex_unlock(philo[0].dead_mutex);
+				pthread_mutex_unlock(philo[0].check_eat);
+				return ;
+			}
+			pthread_mutex_unlock(philo[0].check_eat);
+			i++;
+		}
+		i = 0;
+		while (i < philo[0].philo_nb && philo[0].eat_nb != (size_t)-1
+				&& (size_t)meal_counter(&philo[i]) >= philo[0].eat_nb)
+			i++;
+		if (i == philo[0].philo_nb)
+		{
+			pthread_mutex_lock(philo[0].finish_mutex);
+			*philo->finish1 = 1;
+			pthread_mutex_unlock(philo[0].finish_mutex);
+		}
+		usleep(10);
+	}
 }

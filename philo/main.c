@@ -12,12 +12,12 @@
 
 #include "philo.h"
 
-void	ft_usleep(size_t ms)
+void	ft_usleep(size_t ms, t_philo *philo)
 {
 	size_t	start;
 
 	start = actual_time();
-	while ((actual_time() - start) < ms)
+	while ((actual_time() - start) < ms && !check_death(philo) && !check_finish(philo))
 		usleep(ms / 10);
 }
 
@@ -27,7 +27,7 @@ void	write_status(t_philo *philo, char *action)
 
 	pthread_mutex_lock(philo->write);
 	time = actual_time() - philo->start_time;
-	if (!check_end(philo))
+	if (!check_finish(philo) && !check_death(philo))
 		printf("%ld %d %s\n", time, philo->id, action);
 	pthread_mutex_unlock(philo->write);
 }
@@ -40,6 +40,7 @@ void	destroy_and_free(t_main *main, pthread_mutex_t *philo_forks)
 	pthread_mutex_destroy(&main->write);
 	pthread_mutex_destroy(&main->check_eat);
 	pthread_mutex_destroy(&main->dead_mutex);
+	pthread_mutex_destroy(&main->finish_mutex);
 	while (i < main->philo[0].philo_nb)
 	{
 		pthread_mutex_destroy(&philo_forks[i]);

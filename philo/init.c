@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:11 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/02 10:02:24 by zamgar           ###   ########.fr       */
+/*   Updated: 2025/02/06 06:38:16 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ void	init_main(t_main *main, t_philo *philo)
 	pthread_mutex_init(&main->write, NULL);
 	pthread_mutex_init(&main->check_eat, NULL);
 	pthread_mutex_init(&main->dead_mutex, NULL);
+	pthread_mutex_init(&main->finish_mutex, NULL);
 	main->dead = 0;
+	main->finish = 0;
 	main->philo = philo;
 	return ;
 }
@@ -59,8 +61,8 @@ void	init_philo(t_main *main, t_philo *philo, char *argv[])
 	while (i < ft_atoi(argv[1]))
 	{
 		philo[i].id = i + 1;
-		philo[i].is_eating = 0;
 		philo[i].eaten = 0;
+		philo[i].is_eating = 0;
 		philo[i].philo_nb = ft_atoi(argv[1]);
 		philo[i].time_to_die = ft_atoi(argv[2]);
 		philo[i].time_to_eat = ft_atoi(argv[3]);
@@ -69,12 +71,14 @@ void	init_philo(t_main *main, t_philo *philo, char *argv[])
 			philo[i].eat_nb = ft_atoi(argv[5]);
 		else
 			philo[i].eat_nb = -1;
-		philo[i].last_time_eat = actual_time();
-		philo[i].start_time = actual_time();
+		philo[i].last_time_eat = 0;
+		philo[i].start_time = 0;
 		philo[i].write = &main->write;
 		philo[i].check_eat = &main->check_eat;
 		philo[i].dead_mutex = &main->dead_mutex;
+		philo[i].finish_mutex = &main->finish_mutex;
 		philo[i].dead1 = &main->dead;
+		philo[i].finish1 = &main->finish;
 		i++;
 	}
 	return ;
