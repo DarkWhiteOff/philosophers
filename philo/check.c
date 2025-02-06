@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zamgar <zamgar@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:37 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/02 10:04:00 by zamgar           ###   ########.fr       */
+/*   Updated: 2025/02/06 02:51:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,4 @@ int	check_eat(t_philo *philo)
 		return (1);
 	}
 	return (0);
-}
-
-void	*check(void *philo_p)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)philo_p;
-	while (1)
-	{
-		if (check_death(philo) == 1 || check_eat(philo) == 1)
-			break ;
-	}
-	return (philo_p);
 }

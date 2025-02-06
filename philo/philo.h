@@ -72,4 +72,7 @@ int		check_eat(t_philo *philo);
 int		check_death(t_philo *philo);
 int		philo_dead(t_philo *philo, size_t time_to_die);
 
+void	create_one_thread(t_main *main, pthread_mutex_t *philo_forks);
+void	*routine_one(void *philo_p);
+
 #endif

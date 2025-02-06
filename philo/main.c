@@ -65,7 +65,10 @@ int	main(int argc, char *argv[])
 			exit(printf("Wrong arguments\n"));
 	}
 	init_values(&main, philo, philo_forks, argv);
-	create_threads(&main, philo_forks);
+	if (main.philo[0].philo_nb == 1)
+		create_one_thread(&main, philo_forks);
+	else
+		create_threads(&main, philo_forks);
 	destroy_and_free(&main, philo_forks);
 	return (0);
 }
