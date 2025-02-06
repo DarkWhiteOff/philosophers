@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:59:27 by zamgar            #+#    #+#             */
-/*   Updated: 2025/02/06 22:38:48 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/06 23:00:07 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,12 @@ void	*routine(void *philo_p)
 		write_status(philo, "is sleeping");
 		ft_usleep(philo->time_to_sleep, philo);
 		write_status(philo, "is thinking");
-		usleep(100);
+		size_t ttt = philo->time_to_die - philo->last_time_eat - philo->time_to_eat / 2;
+		if (ttt <= 0)
+			ttt = 0;
+		else if (ttt > 600)
+			ttt = 200;
+		usleep(ttt);
 	}
 	return (philo_p);
 }
